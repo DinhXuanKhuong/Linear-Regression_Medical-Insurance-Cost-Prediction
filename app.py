@@ -20,7 +20,7 @@ st.set_page_config(
 
 st.title("Medical Insurance Charge Prediction")
 st.write(
-    "Drag the **Age** and **BMI** sliders to instantly see their impact on insurance costs."
+    "Drag the **Age** and **BMI** sliders to instantly see their impact on insurance costs. "
     "All charts and predictions update in **real time**."
 )
 
@@ -63,7 +63,7 @@ model_cols = ["age", "bmi", "smoker"]
 # -------------------------------------------------
 input_df = build_input_df(age, bmi, children, smoker, sex, region)
 try:
-    pred = pipeline.predict(input_df[model_cols])[0]
+    pred = max(pipeline.predict(input_df[model_cols])[0],0)
     st.markdown(
         f"<h2 style='text-align: center; color: #2e8b57;'>"
         f"Estimated Charge: <span style='color:#d62728;'>${pred:,.2f}</span>"
@@ -73,6 +73,8 @@ try:
 except Exception as e:
     st.error("Error!!. Please recheck pipeline.")
     st.exception(e)
+
+
 
 # -------------------------------------------------
 # 6. VISUALISATIONS - Cập nhật live theo slider
@@ -156,6 +158,26 @@ ax.set_xlabel("Age")
 ax.set_ylabel("BMI")
 ax.set_title(f"Charge Heatmap – {smoker_title}")
 st.pyplot(fig, use_container_width=True)
+
+# -------------------------------------------------
+# 5.1 Model performance (MAE) — visible in the UI
+# -------------------------------------------------
+# Hard-coded MAE value (from evaluation in the notebook)
+MAE_VALUE = 2817.20
+
+st.markdown("")  # small spacer
+st.subheader("Model performance")
+st.metric(label="Mean Absolute Error (MAE)", value=f"${MAE_VALUE:>.2f}".replace(', .', ','))
+
+with st.expander("What does MAE mean?"):
+    st.write(
+        "MAE (Mean Absolute Error) is the average absolute difference between the model's predicted "
+        "insurance charges and the actual charges on the test set. A MAE of "
+        f"{MAE_VALUE:,} means that, on average, the difference between the model's prediction (charge)"
+        f" and the actual charge is about {MAE_VALUE:,} dollars. \n"
+        
+    )
+
 
 # -------------------------------------------------
 # 7. Footer
