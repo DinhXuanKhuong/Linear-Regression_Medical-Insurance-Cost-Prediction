@@ -44,6 +44,7 @@ pip install -r requirements.txt
 Start the app with:
 
 ```bash
+cd source_code
 streamlit run app.py
 ```
 
